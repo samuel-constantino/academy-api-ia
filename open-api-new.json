@@ -1,0 +1,510 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+      "title": "Academy Management API",
+      "description": "API for managing clients, employees, plans, and other academy information",
+      "version": "1.0.0"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:3000",
+        "description": "Local Development Server"
+      }
+    ],
+    "paths": {
+      "/info": {
+        "get": {
+          "operationId": "getInfo",
+          "summary": "Get public information about the academy",
+          "responses": {
+            "200": {
+              "description": "Public information about the academy",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/PublicInfo"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/user": {
+        "put": {
+          "operationId": "updateOrCreateUser",
+          "summary": "Update or create a user",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Client"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "User updated",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Client"
+                  }
+                }
+              }
+            },
+            "201": {
+              "description": "User created",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Client"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "x-channel header is required",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/user/subscribe": {
+        "post": {
+          "operationId": "subscribeUser",
+          "summary": "Subscribe a user to a plan",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Registration successful",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string"
+                      },
+                      "data": {
+                        "$ref": "#/components/schemas/Client"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Client not found or invalid plan selected",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/admin/clients": {
+        "get": {
+          "operationId": "getAllClients",
+          "summary": "Get all clients",
+          "responses": {
+            "200": {
+              "description": "List of all clients",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "clients": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/Client"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Access denied",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/admin/employees": {
+        "get": {
+          "operationId": "getAllEmployees",
+          "summary": "Get all employees",
+          "responses": {
+            "200": {
+              "description": "List of all employees",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "employees": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/Employee"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Access denied",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/admin/plans": {
+        "get": {
+          "operationId": "getAllPlans",
+          "summary": "Get all plans with client details",
+          "responses": {
+            "200": {
+              "description": "List of all plans with clients",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "plans": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "number"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "durationMonths": {
+                              "type": "number"
+                            },
+                            "price": {
+                              "type": "number"
+                            },
+                            "clients": {
+                              "type": "array",
+                              "items": {
+                                "$ref": "#/components/schemas/Client"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Access denied",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/admin/subscriptions": {
+        "get": {
+          "operationId": "getAllSubscriptions",
+          "summary": "Get all active subscriptions",
+          "responses": {
+            "200": {
+              "description": "List of all subscriptions",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "subscriptions": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/Client"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Access denied",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/admin/report": {
+        "get": {
+          "operationId": "getReport",
+          "summary": "Get a report of the academy",
+          "responses": {
+            "200": {
+              "description": "Report of the academy",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "totalClients": {
+                        "type": "number"
+                      },
+                      "totalEmployees": {
+                        "type": "number"
+                      },
+                      "totalActiveClients": {
+                        "type": "number"
+                      },
+                      "totalMonthlyActiveClients": {
+                        "type": "number"
+                      },
+                      "totalQuarterlyActiveClients": {
+                        "type": "number"
+                      },
+                      "totalAnnualActiveClients": {
+                        "type": "number"
+                      },
+                      "revenue": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Access denied",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "PublicInfo": {
+          "type": "object",
+          "properties": {
+            "location": {
+              "$ref": "#/components/schemas/Address"
+            },
+            "equipments": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "hours": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "plans": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Plan"
+              }
+            }
+          }
+        },
+        "RegisterRequest": {
+          "type": "object",
+          "properties": {
+            "clientId": {
+              "type": "number"
+            },
+            "planId": {
+              "type": "number"
+            }
+          }
+        },
+        "Address": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "number"
+            },
+            "street": {
+              "type": "string"
+            },
+            "city": {
+              "type": "string"
+            },
+            "neighborhood": {
+              "type": "string"
+            },
+            "number": {
+              "type": "string"
+            }
+          }
+        },
+        "Client": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "number"
+            },
+            "name": {
+              "type": "string"
+            },
+            "cpf": {
+              "type": "number"
+            },
+            "rg": {
+              "type": "number"
+            },
+            "email": {
+              "type": "string"
+            },
+            "phone": {
+              "type": "string"
+            },
+            "dob": {
+              "type": "string",
+              "format": "date"
+            },
+            "enrollmentDate": {
+              "type": "string",
+              "format": "date"
+            },
+            "address": {
+              "$ref": "#/components/schemas/Address"
+            },
+            "planId": {
+              "type": "number"
+            },
+            "isActive": {
+              "type": "boolean"
+            }
+          }
+        },
+        "Employee": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "number"
+            },
+            "name": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "phone": {
+              "type": "string"
+            },
+            "isAdmin": {
+              "type": "boolean"
+            },
+            "address": {
+              "$ref": "#/components/schemas/Address"
+            },
+            "specialty": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Professional"
+              }
+            }
+          }
+        },
+        "Professional": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "number"
+            },
+            "specialty": {
+              "type": "string"
+            }
+          }
+        },
+        "Plan": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "number"
+            },
+            "name": {
+              "type": "string"
+            },
+            "durationMonths": {
+              "type": "number"
+            },
+            "price": {
+              "type": "number"
+            }
+          }
+        },
+        "Error": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+  
