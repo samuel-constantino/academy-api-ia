@@ -1,5 +1,6 @@
-import express, { Request, Response, NextFunction } from 'express';
-import cors from "cors";
+// @deno-types="npm:@types/express@4"
+import express, { Request, Response, NextFunction } from 'npm:express@4.18.2';
+import cors from "npm:cors";
 
 const app = express();
 
@@ -273,6 +274,6 @@ app.get('/admin/report', (_req: Request, res: Response) => {
 });
 
 // Start the server
-app.listen(process.env.PORT || 3000, () => {
-  console.log(`Server is running on port ${process.env.PORT || 3000}`);
+app.listen(Deno.env.get("PORT") || 3000, () => {
+  console.log(`Server is running on port ${Deno.env.get("PORT") || 3000}`);
 });
