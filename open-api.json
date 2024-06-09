@@ -7,13 +7,14 @@
   },
   "servers": [
     {
-      "url": "fresh-lobster-86.deno.dev",
+      "url": "https://fresh-lobster-86.deno.dev/",
       "description": "Development server"
     }
   ],
   "paths": {
     "/info": {
       "get": {
+        "operationId": "getPublicInfo",
         "summary": "Get public information about the fitness center",
         "responses": {
           "200": {
@@ -53,6 +54,7 @@
       }
     },
     "/user": {
+      "operationId": "getUser",
       "post": {
         "summary": "Create or retrieve user information",
         "requestBody": {
@@ -124,6 +126,7 @@
       }
     },
     "/user/subscribe": {
+      "operationId": "subscribeUser",
       "post": {
         "summary": "Subscribe a user to a plan",
         "requestBody": {
@@ -179,6 +182,7 @@
     },
     "/admin/leads": {
       "get": {
+        "operationId": "getAllLeads",
         "summary": "Get all leads",
         "responses": {
           "200": {
@@ -204,6 +208,7 @@
     },
     "/admin/clients": {
       "get": {
+        "operationId": "getAllClients",
         "summary": "Get all clients",
         "responses": {
           "200": {
@@ -228,6 +233,7 @@
       }
     },
     "/admin/professionals": {
+      "operationId": "getAllProfessionals",
       "get": {
         "summary": "Get all professionals",
         "responses": {
@@ -253,6 +259,7 @@
       }
     },
     "/admin/plans": {
+      "operationId": "getAllPlans",
       "get": {
         "summary": "Get all plans with associated clients",
         "responses": {
@@ -298,6 +305,7 @@
       }
     },
     "/admin/subscriptions": {
+      "operationId": "getAllSubscriptions",
       "get": {
         "summary": "Get all subscribed clients",
         "responses": {
@@ -323,6 +331,7 @@
       }
     },
     "/admin/report": {
+      "operationId": "getReport",
       "get": {
         "summary": "Generate a report of the fitness center",
         "responses": {
