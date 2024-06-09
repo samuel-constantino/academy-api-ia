@@ -1,28 +1,51 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Academy Management API",
-    "description": "API for managing clients, employees, plans, and other academy information",
+    "title": "Fitness Center Management System API",
+    "description": "API for managing a fitness center including clients, professionals, plans, and administrative tasks.",
     "version": "1.0.0"
   },
   "servers": [
     {
-      "url": "http://localhost:3000",
-      "description": "Development Server"
+      "url": "https://fresh-lobster-86.deno.dev/",
+      "description": "Development server"
     }
   ],
   "paths": {
     "/info": {
       "get": {
-        "operationId": "getInfo",
-        "summary": "Get public information about the academy",
+        "operationId": "getPublicInfo",
+        "summary": "Get public information about the fitness center",
         "responses": {
           "200": {
-            "description": "Public information about the academy",
+            "description": "Public information about the fitness center",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PublicInfo"
+                  "type": "object",
+                  "properties": {
+                    "location": {
+                      "$ref": "#/components/schemas/Address"
+                    },
+                    "equipments": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "hours": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "plans": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Plan"
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -31,36 +54,70 @@
       }
     },
     "/user": {
+      "operationId": "getUser",
       "post": {
-        "operationId": "createUser",
-        "summary": "Create a new user",
+        "summary": "Create or retrieve user information",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Client"
+                "type": "object",
+                "properties": {
+                  "leadId": {
+                    "type": "number"
+                  },
+                  "planId": {
+                    "type": "number"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "cpf": {
+                    "type": "string"
+                  },
+                  "rg": {
+                    "type": "string"
+                  },
+                  "dob": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "address": {
+                    "$ref": "#/components/schemas/ClientAddress"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "User created",
+          "200": {
+            "description": "User information retrieved successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Client"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Professional"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Client"
+                    }
+                  ]
                 }
               }
             }
           },
-          "400": {
-            "description": "x-channel header is required",
+          "201": {
+            "description": "Lead created successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/Lead"
                 }
               }
             }
@@ -69,8 +126,8 @@
       }
     },
     "/user/subscribe": {
+      "operationId": "subscribeUser",
       "post": {
-        "operationId": "subscribeUser",
         "summary": "Subscribe a user to a plan",
         "requestBody": {
           "required": true,
@@ -84,7 +141,7 @@
         },
         "responses": {
           "200": {
-            "description": "Registration successful",
+            "description": "User subscribed successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -94,7 +151,11 @@
                       "type": "string"
                     },
                     "data": {
-                      "$ref": "#/components/schemas/Client"
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/Client"
+                        }
+                      ]
                     }
                   }
                 }
@@ -102,11 +163,42 @@
             }
           },
           "400": {
-            "description": "Client not found or invalid plan selected",
+            "description": "Bad request",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/leads": {
+      "get": {
+        "operationId": "getAllLeads",
+        "summary": "Get all leads",
+        "responses": {
+          "200": {
+            "description": "List of all leads",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "leads": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Lead"
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -136,23 +228,13 @@
                 }
               }
             }
-          },
-          "403": {
-            "description": "Access denied",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
           }
         }
       }
     },
     "/admin/professionals": {
+      "operationId": "getAllProfessionals",
       "get": {
-        "operationId": "getAllProfessionals",
         "summary": "Get all professionals",
         "responses": {
           "200": {
@@ -172,27 +254,17 @@
                 }
               }
             }
-          },
-          "403": {
-            "description": "Access denied",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
           }
         }
       }
     },
     "/admin/plans": {
+      "operationId": "getAllPlans",
       "get": {
-        "operationId": "getAllPlans",
-        "summary": "Get all plans with client details",
+        "summary": "Get all plans with associated clients",
         "responses": {
           "200": {
-            "description": "List of all plans with clients",
+            "description": "List of all plans with associated clients",
             "content": {
               "application/json": {
                 "schema": {
@@ -228,27 +300,17 @@
                 }
               }
             }
-          },
-          "403": {
-            "description": "Access denied",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
           }
         }
       }
     },
     "/admin/subscriptions": {
+      "operationId": "getAllSubscriptions",
       "get": {
-        "operationId": "getAllSubscriptions",
-        "summary": "Get all active subscriptions",
+        "summary": "Get all subscribed clients",
         "responses": {
           "200": {
-            "description": "List of all subscriptions",
+            "description": "List of all subscribed clients",
             "content": {
               "application/json": {
                 "schema": {
@@ -264,27 +326,17 @@
                 }
               }
             }
-          },
-          "403": {
-            "description": "Access denied",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
           }
         }
       }
     },
     "/admin/report": {
+      "operationId": "getReport",
       "get": {
-        "operationId": "getReport",
-        "summary": "Get a report of the academy",
+        "summary": "Generate a report of the fitness center",
         "responses": {
           "200": {
-            "description": "Report of the academy",
+            "description": "Report generated successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -312,16 +364,6 @@
                       "type": "number"
                     }
                   }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Access denied",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -355,6 +397,17 @@
             "items": {
               "$ref": "#/components/schemas/Plan"
             }
+          }
+        }
+      },
+      "Lead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "phone": {
+            "type": "string"
           }
         }
       },
@@ -487,25 +540,6 @@
           },
           "price": {
             "type": "number"
-          }
-        }
-      },
-      "Lead": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number"
-          },
-          "phone": {
-            "type": "string"
-          }
-        }
-      },
-      "Error": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string"
           }
         }
       }
