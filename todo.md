@@ -34,10 +34,3 @@ Serviços
 
 
 Observação: Pensar como o operador vai assumir a conversa
-
-- Trocar conceito de cliente inicial por lead;
-
-- Adicionar validação de dados:
-    - calculo de cpf;
-    - valicao de email;
-    - pegar telefone do lead pelo header;
