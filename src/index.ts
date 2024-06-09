@@ -24,7 +24,12 @@ interface Lead {
 }
 
 interface RegisterRequest {
-  leadId: number;
+  name: string;
+  email?: string;
+  cpf: string;
+  rg: string;
+  dob: Date;
+  address: ClientAddress;
   planId: number;
 }
 
