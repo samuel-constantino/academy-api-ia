@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "fresh-lobster-86-4zyfw93kg937.deno.dev",
+      "url": "fresh-lobster-86.deno.dev",
       "description": "Development server"
     }
   ],
