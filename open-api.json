@@ -7,8 +7,8 @@
   },
   "servers": [
     {
-      "url": "https://fresh-lobster-86.deno.dev/",
-      "description": "Development Server"
+      "url": "http://localhost:3000",
+      "description": "Local Development Server"
     }
   ],
   "paths": {
@@ -102,7 +102,43 @@
             }
           },
           "400": {
-            "description": "Client not found or invalid plan selected",
+            "description": "Client not found, invalid plan selected, or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/leads": {
+      "get": {
+        "operationId": "getAllLeads",
+        "summary": "Get all leads",
+        "responses": {
+          "200": {
+            "description": "List of all leads",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "leads": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Lead"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied",
             "content": {
               "application/json": {
                 "schema": {
@@ -242,42 +278,6 @@
         }
       }
     },
-    "/admin/leads": {
-      "get": {
-        "operationId": "getAllLeads",
-        "summary": "Get all leads",
-        "responses": {
-          "200": {
-            "description": "List of all leads",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "leads": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Lead"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Access denied",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/admin/subscriptions": {
       "get": {
         "operationId": "getAllSubscriptions",
@@ -397,8 +397,25 @@
       "RegisterRequest": {
         "type": "object",
         "properties": {
-          "leadId": {
-            "type": "number"
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "cpf": {
+            "type": "string"
+          },
+          "rg": {
+            "type": "string"
+          },
+          "dob": {
+            "type": "string",
+            "format": "date"
+          },
+          "address": {
+            "$ref": "#/components/schemas/ClientAddress"
           },
           "planId": {
             "type": "number"
@@ -453,7 +470,8 @@
             "type": "string"
           },
           "email": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "phone": {
             "type": "string"
