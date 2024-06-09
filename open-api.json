@@ -1,154 +1,510 @@
 {
-  "openapi": "3.0.0",
-  "info": {
-    "title": "API do Ginásio",
-    "version": "1.0.0",
-    "description": "API para gerenciamento de estudantes, profissionais e planos de um ginásio."
-  },
-  "servers": [
-    {
-      "url": "https://samuel-constantino-api.deno.dev"
-    }
-  ],
-  "paths": {
-    "/info": {
-      "get": {
-        "operationId": "getPublicInfo",
-        "summary": "Obtém informações públicas do ginásio",
-        "description": "Retorna informações como localização, equipamentos disponíveis, horários de funcionamento e planos oferecidos.",
-        "responses": {
-          "200": {
-            "description": "Informações públicas obtidas com sucesso"
-          }
-        }
-      }
+    "openapi": "3.0.3",
+    "info": {
+      "title": "Academy Management API",
+      "description": "API for managing clients, employees, plans, and other academy information",
+      "version": "1.0.0"
     },
-    "/user": {
-      "put": {
-        "operationId": "updateOrRegisterUser",
-        "summary": "Atualiza ou registra um novo usuário",
-        "description": "Atualiza um usuário existente ou registra um novo usuário com base no número de telefone fornecido.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "description": "Nome do usuário, caso você já saiba"
-                  },
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "description": "Email do usuário, caso você já saiba"
+    "servers": [
+      {
+        "url": "https://fresh-lobster-86-md1k74rv71n4.deno.dev/",
+        "description": "Local Development Server"
+      }
+    ],
+    "paths": {
+      "/info": {
+        "get": {
+          "operationId": "getInfo",
+          "summary": "Get public information about the academy",
+          "responses": {
+            "200": {
+              "description": "Public information about the academy",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/PublicInfo"
                   }
                 }
               }
             }
           }
-        },
-        "responses": {
-          "200": {
-            "description": "Usuário atualizado ou registrado com sucesso"
+        }
+      },
+      "/user": {
+        "put": {
+          "operationId": "updateOrCreateUser",
+          "summary": "Update or create a user",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Client"
+                }
+              }
+            }
           },
-          "201": {
-            "description": "Novo usuário criado com sucesso"
+          "responses": {
+            "200": {
+              "description": "User updated",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Client"
+                  }
+                }
+              }
+            },
+            "201": {
+              "description": "User created",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Client"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "x-channel header is required",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/user/subscribe": {
+        "post": {
+          "operationId": "subscribeUser",
+          "summary": "Subscribe a user to a plan",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Registration successful",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string"
+                      },
+                      "data": {
+                        "$ref": "#/components/schemas/Client"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Client not found or invalid plan selected",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/admin/clients": {
+        "get": {
+          "operationId": "getAllClients",
+          "summary": "Get all clients",
+          "responses": {
+            "200": {
+              "description": "List of all clients",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "clients": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/Client"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Access denied",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/admin/employees": {
+        "get": {
+          "operationId": "getAllEmployees",
+          "summary": "Get all employees",
+          "responses": {
+            "200": {
+              "description": "List of all employees",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "employees": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/Employee"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Access denied",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/admin/plans": {
+        "get": {
+          "operationId": "getAllPlans",
+          "summary": "Get all plans with client details",
+          "responses": {
+            "200": {
+              "description": "List of all plans with clients",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "plans": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "number"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "durationMonths": {
+                              "type": "number"
+                            },
+                            "price": {
+                              "type": "number"
+                            },
+                            "clients": {
+                              "type": "array",
+                              "items": {
+                                "$ref": "#/components/schemas/Client"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Access denied",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/admin/subscriptions": {
+        "get": {
+          "operationId": "getAllSubscriptions",
+          "summary": "Get all active subscriptions",
+          "responses": {
+            "200": {
+              "description": "List of all subscriptions",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "subscriptions": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/Client"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Access denied",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/admin/report": {
+        "get": {
+          "operationId": "getReport",
+          "summary": "Get a report of the academy",
+          "responses": {
+            "200": {
+              "description": "Report of the academy",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "totalClients": {
+                        "type": "number"
+                      },
+                      "totalEmployees": {
+                        "type": "number"
+                      },
+                      "totalActiveClients": {
+                        "type": "number"
+                      },
+                      "totalMonthlyActiveClients": {
+                        "type": "number"
+                      },
+                      "totalQuarterlyActiveClients": {
+                        "type": "number"
+                      },
+                      "totalAnnualActiveClients": {
+                        "type": "number"
+                      },
+                      "revenue": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Access denied",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "/user/subscribe": {
-      "post": {
-        "operationId": "subscribeUserToPlan",
-        "summary": "Inscreve um usuário em um plano",
-        "description": "Associa um plano ao usuário com base no ID do plano fornecido.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "planId": {
-                    "type": "integer"
-                  }
-                },
-                "required": ["planId"]
+    "components": {
+      "schemas": {
+        "PublicInfo": {
+          "type": "object",
+          "properties": {
+            "location": {
+              "$ref": "#/components/schemas/Address"
+            },
+            "equipments": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "hours": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "plans": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Plan"
               }
             }
           }
         },
-        "responses": {
-          "200": {
-            "description": "Usuário inscrito no plano com sucesso"
-          },
-          "400": {
-            "description": "Erro ao inscrever usuário no plano"
+        "RegisterRequest": {
+          "type": "object",
+          "properties": {
+            "clientId": {
+              "type": "number"
+            },
+            "planId": {
+              "type": "number"
+            }
           }
-        }
-      }
-    },
-    "/admin/students": {
-      "get": {
-        "operationId": "getStudents",
-        "summary": "Lista todos os estudantes, apenas para administradores",
-        "description": "Retorna uma lista de todos os estudantes registrados.",
-        "responses": {
-          "200": {
-            "description": "Lista de estudantes obtida com sucesso"
+        },
+        "Address": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "number"
+            },
+            "street": {
+              "type": "string"
+            },
+            "city": {
+              "type": "string"
+            },
+            "neighborhood": {
+              "type": "string"
+            },
+            "number": {
+              "type": "string"
+            }
           }
-        }
-      }
-    },
-    "/admin/professionals": {
-      "get": {
-        "operationId": "getProfessionals",
-        "summary": "Lista todos os profissionais, apenas para administradores",
-        "description": "Retorna uma lista de todos os profissionais registrados.",
-        "responses": {
-          "200": {
-            "description": "Lista de profissionais obtida com sucesso"
+        },
+        "Client": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "number"
+            },
+            "name": {
+              "type": "string"
+            },
+            "cpf": {
+              "type": "number"
+            },
+            "rg": {
+              "type": "number"
+            },
+            "email": {
+              "type": "string"
+            },
+            "phone": {
+              "type": "string"
+            },
+            "dob": {
+              "type": "string",
+              "format": "date"
+            },
+            "enrollmentDate": {
+              "type": "string",
+              "format": "date"
+            },
+            "address": {
+              "$ref": "#/components/schemas/Address"
+            },
+            "planId": {
+              "type": "number"
+            },
+            "isActive": {
+              "type": "boolean"
+            }
           }
-        }
-      }
-    },
-    "/admin/plans": {
-      "get": {
-        "operationId": "getPlans",
-        "summary": "Lista todos os planos, apenas para administradores",
-        "description": "Retorna uma lista de todos os planos disponíveis, incluindo os estudantes associados a cada plano.",
-        "responses": {
-          "200": {
-            "description": "Lista de planos obtida com sucesso"
+        },
+        "Employee": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "number"
+            },
+            "name": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "phone": {
+              "type": "string"
+            },
+            "isAdmin": {
+              "type": "boolean"
+            },
+            "address": {
+              "$ref": "#/components/schemas/Address"
+            },
+            "specialty": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Professional"
+              }
+            }
           }
-        }
-      }
-    },
-    "/admin/subscriptions": {
-      "get": {
-        "operationId": "getSubscriptions",
-        "summary": "Lista todas as inscrições, apenas para administradores",
-        "description": "Retorna uma lista de todos os estudantes que estão atualmente inscritos em planos.",
-        "responses": {
-          "200": {
-            "description": "Lista de inscrições obtida com sucesso"
+        },
+        "Professional": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "number"
+            },
+            "specialty": {
+              "type": "string"
+            }
           }
-        }
-      }
-    },
-    "/admin/report": {
-      "get": {
-        "operationId": "getAdminReport",
-        "summary": "Obtém um relatório administrativo, apenas para administradores",
-        "description": "Retorna um relatório contendo o total de estudantes, profissionais, planos, inscrições e receitas.",
-        "responses": {
-          "200": {
-            "description": "Relatório administrativo obtido com sucesso"
+        },
+        "Plan": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "number"
+            },
+            "name": {
+              "type": "string"
+            },
+            "durationMonths": {
+              "type": "number"
+            },
+            "price": {
+              "type": "number"
+            }
+          }
+        },
+        "Error": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string"
+            }
           }
         }
       }
     }
   }
-}
+  
